@@ -83,7 +83,7 @@ def compare(runs, iterations, bit, **algorithms):
         filteredStat = [stat[0:5], stat[5:10]]
         for i in range(2):
             row_data = {
-                "Loop_Name": name.strip("\t") + f" ({"Cost" if i == 0 else "Iteration"})",
+                "Loop_Name": name.strip("\t") + f" ({"Cost" if i == 1 else "Iteration"})",
                 "Min": filteredStat[i][0],
                 "Mode": filteredStat[i][1],
                 "Median": filteredStat[i][2],
@@ -223,6 +223,29 @@ def randomSearch(maxIterations=1000, bit=8):
                 break
         iteration += 1
     return bestBoard, bestCost, iteration
+
+def randomRandomSearch(maxIterations=1000, bit=8):
+    bestBoard = [random.randrange(1, bit+1) for _ in range(bit)]
+    # bestBoard = random.sample(range(1,bit+1), bit)
+    bestCost = objFunc(bestBoard)
+    iteration = 0
+    if bestCost == 0: # if it randomly finds one
+            return bestBoard, bestCost, iteration
+    
+    for i in range(maxIterations):
+        newBoard = [random.randrange(1, bit+1) for _ in range(bit)]
+        # newBoard = random.sample(range(1,bit+1), bit)
+        newCost = objFunc(newBoard)
+        # print("new best board: ", bestBoard, " with cost: ", bestCost)
+        # print("new board: ", newBoard, " with cost: ", newCost)
+        if newCost < bestCost:
+            bestCost = newCost
+            bestBoard = newBoard.copy()
+            if bestCost == 0:
+                break
+        iteration += 1
+    return bestBoard, bestCost, iteration
+
 
 def hillClimbSearch(maxIterations=1000, bit=8):
     board = random.sample(range(1,bit+1), bit)
@@ -369,7 +392,8 @@ def swapRandomSearch(maxIteration=1000, bit=8):
 
 threshole = .9
 algorithms = {
-    "Random (Fully)\t\t": randomSearch,
+    "Random (Unique)\t\t": randomSearch,
+    "Random (Non-Unique)\t": randomRandomSearch,
     "Random (Swap)\t\t": swapRandomSearch,
     "Hill Climb (Random)\t": hillClimbSearch,
     "Hill Climb (Swap)\t": swapHillClimbSearch,
@@ -377,7 +401,7 @@ algorithms = {
     "Simulated Annealing\t": simulatedAnnealing,
     "Simulated Annealing (neighbor)": neighborSimulatedAnnealing,
 }
-compare(runs=50, iterations=1000, bit=8, **algorithms)
+compare(runs=30, iterations=1000, bit=8, **algorithms)
 
 
 
@@ -399,3 +423,7 @@ compare(runs=50, iterations=1000, bit=8, **algorithms)
 # swapHillClimbSearchBoard, swapHillClimbSearchCost, swapHillClimbSearchIteration = swapHillClimbSearch()
 # print("Swap Hill Climb cost:", swapHillClimbSearchCost, ", in iteration:", swapHillClimbSearchIteration)
 # printBoard(swapHillClimbSearchBoard)
+
+# board=[2, 4, 8, 3, 5, 7, 6, 1]
+# print(objFunc(board))
+# printBoard(board)
