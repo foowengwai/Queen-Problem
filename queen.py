@@ -55,7 +55,10 @@ def getStats(data):
     for i in range(len(costs)):
         if costs[i] == 0:
             solvedIterations.append(iterations[i])
-    nfe = statistics.median(solvedIterations)
+    if len(solvedIterations) > 0:
+        nfe = statistics.median(solvedIterations)
+    else:
+        nfe = 0
     
     founds = costs.count(0)
     foundsPersent = costs.count(0)/len(costs)*100
@@ -200,6 +203,7 @@ def printBoard(board):
 ##################
 
 def randomSearch(maxIterations=1000, bit=8):
+    # bestBoard = [random.randrange(1, bit+1) for _ in range(bit)]
     bestBoard = random.sample(range(1,bit+1), bit)
     bestCost = objFunc(bestBoard)
     iteration = 0
@@ -207,7 +211,8 @@ def randomSearch(maxIterations=1000, bit=8):
             return bestBoard, bestCost, iteration
     
     for i in range(maxIterations):
-        newBoard = random.sample(range(1,len(bestBoard)+1), len(bestBoard))
+        # newBoard = [random.randrange(1, bit+1) for _ in range(bit)]
+        newBoard = random.sample(range(1,bit+1), bit)
         newCost = objFunc(newBoard)
         # print("new best board: ", bestBoard, " with cost: ", bestCost)
         # print("new board: ", newBoard, " with cost: ", newCost)
